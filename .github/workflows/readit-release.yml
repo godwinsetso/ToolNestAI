@@ -11,8 +11,8 @@ permissions:
   actions: read
 
 env:
-  TAG: readit-v0.1.0-preview.1
-  ANDROID_RUN: "40349830203"
+  TAG: readit-v0.1.0-preview.2
+  ANDROID_RUN: "40357617297"
   DESKTOP_RUN: "40349991988"
 
 jobs:
@@ -56,4 +56,4 @@ jobs:
           sed -i 's/^          //' notes.md
           gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$TAG" out/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease \
-            --title "READIT 0.1.0 preview 1" --notes-file notes.md
+            --title "READIT 0.1.0 preview 2" --notes-file notes.md
