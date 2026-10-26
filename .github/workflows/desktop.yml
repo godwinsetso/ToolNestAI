@@ -33,6 +33,10 @@ jobs:
           mkdir -p readit/vendor/pdfium/linux-x64
           curl -fsSL "https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F7881/pdfium-linux-x64.tgz" | tar xz -C readit/vendor/pdfium/linux-x64
           pip install python-docx python-pptx reportlab ebooklib pypdf pillow && python3 readit/tools/make_fixtures.py
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
       - name: cargo test
         working-directory: readit/desktop/src-tauri
         env: { READIT_PDFIUM_DIR: "${{ github.workspace }}/readit/vendor/pdfium/linux-x64/lib" }
@@ -58,6 +62,10 @@ jobs:
       - name: Bundle PDFium and the offline voice
         shell: bash
         run: readit/scripts/fetch-desktop-deps.sh windows
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
       - name: Build installer
         working-directory: readit/desktop
         run: |
@@ -93,6 +101,10 @@ jobs:
           sudo apt-get update -o Acquire::Retries=3
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libasound2-dev libxdo-dev
       - run: readit/scripts/ci-run.sh readit/scripts/fetch-desktop-deps.sh linux
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
       - name: Build packages
         working-directory: readit/desktop
         run: |

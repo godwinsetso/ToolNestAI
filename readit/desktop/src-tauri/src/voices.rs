@@ -545,7 +545,7 @@ fn free_space(p: &Path) -> Option<u64> {
     use std::os::windows::ffi::OsStrExt;
     let wide: Vec<u16> = p.as_os_str().encode_wide().chain(Some(0)).collect();
     let mut free: u64 = 0;
-    extern "system" {
+    unsafe extern "system" {
         fn GetDiskFreeSpaceExW(dir: *const u16, avail: *mut u64, total: *mut u64, free: *mut u64) -> i32;
     }
     let ok = unsafe { GetDiskFreeSpaceExW(wide.as_ptr(), &mut free, std::ptr::null_mut(), std::ptr::null_mut()) };
