@@ -1,0 +1,59 @@
+name: READIT release
+
+# Publishes already-built READIT artifacts as a GitHub pre-release, without rebuilding.
+# Edit the run IDs below (from the Android and Desktop workflow runs) and push this file.
+on:
+  push:
+    paths: [".github/workflows/readit-release.yml"]
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  TAG: readit-v0.1.0-preview.2
+  ANDROID_RUN: "40357617297"
+  DESKTOP_RUN: "40349991988"
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: readit-android, path: dl/android, run-id: "${{ env.ANDROID_RUN }}", github-token: "${{ github.token }}" }
+      - uses: actions/download-artifact@v4
+        with: { name: readit-windows, path: dl/windows, run-id: "${{ env.DESKTOP_RUN }}", github-token: "${{ github.token }}" }
+      - uses: actions/download-artifact@v4
+        with: { name: readit-linux, path: dl/linux, run-id: "${{ env.DESKTOP_RUN }}", github-token: "${{ github.token }}" }
+      - uses: actions/download-artifact@v4
+        with: { name: readit-macos, path: dl/macos, run-id: "${{ env.DESKTOP_RUN }}", github-token: "${{ github.token }}" }
+      - name: Name the files clearly
+        run: |
+          mkdir out
+          find dl -type f | sort
+          cp dl/android/apk/debug/*.apk                   out/READIT-0.1.0-android.apk
+          cp dl/android/apk/release/*.apk                 out/READIT-0.1.0-android-release-unsigned.apk
+          cp dl/android/bundle/release/*.aab              out/READIT-0.1.0-android.aab
+          cp dl/windows/nsis/*.exe                        out/READIT-0.1.0-windows-setup.exe
+          cp dl/windows/msi/*.msi                         out/READIT-0.1.0-windows.msi
+          cp dl/linux/deb/*.deb                           out/READIT-0.1.0-linux-amd64.deb
+          cp dl/linux/appimage/*.AppImage                 out/READIT-0.1.0-linux-x86_64.AppImage
+          cp dl/macos/*.dmg                               out/READIT-0.1.0-macos.dmg
+          (cd out && sha256sum * > SHA256SUMS.txt)
+          ls -la out
+      - name: Publish pre-release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          cat > notes.md <<'NOTES'
+          First preview build of READIT. These are untested on real devices; please report what you find.
+
+          - **Android:** `READIT-0.1.0-android.apk` (debug-signed, install directly; allow "Install unknown apps"). Android 8.0 or later.
+          - **Windows:** `READIT-0.1.0-windows-setup.exe` (installs for the current user, no admin needed). Not code-signed yet, so Windows SmartScreen will warn: choose More info, then Run anyway.
+          - **Linux:** `.deb` or `.AppImage`. **macOS:** `.dmg` (experimental, unsigned).
+
+          The release APK and App Bundle are unsigned and are for signing before store publication. Checksums are in `SHA256SUMS.txt`.
+          NOTES
+          sed -i 's/^          //' notes.md
+          gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" out/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease \
+            --title "READIT 0.1.0 preview 2" --notes-file notes.md

@@ -1,0 +1,39 @@
+[package]
+name = "readit-core"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["lib", "cdylib"]
+name = "readit_core"
+
+[dependencies]
+ego-tree = "0.11.1"
+hex = "0.4.3"
+once_cell = "1.21.4"
+pdfium-render = { version = "0.9.4", default-features = false, features = ["pdfium_latest", "thread_safe"] }
+pulldown-cmark = "0.13.5"
+quick-xml = "0.42.0"
+regex = "1.13.1"
+rusqlite = { version = "0.41.0", features = ["bundled"] }
+scraper = "0.29.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+thiserror = "2.0.21"
+unicode-segmentation = "1.13.3"
+uniffi = { version = "0.32.2", features = ["cli"] }
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+tempfile = "3.27.0"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+
+[profile.release]
+lto = true
+opt-level = "s"
+strip = true
+codegen-units = 1

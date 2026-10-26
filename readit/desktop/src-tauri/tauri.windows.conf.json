@@ -1,0 +1,11 @@
+{
+  "bundle": {
+    "resources": {
+      "resources/": "resources/",
+      "libs/windows/sherpa-onnx-c-api.dll": "sherpa-onnx-c-api.dll",
+      "libs/windows/onnxruntime.dll": "onnxruntime.dll",
+      "libs/windows/onnxruntime_providers_shared.dll": "onnxruntime_providers_shared.dll",
+      "libs/windows/cargs.dll": "cargs.dll"
+    }
+  }
+}

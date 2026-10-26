@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "engineVersion": "sherpa-onnx 1.13.8",
+  "note": "Only voices whose licences allow redistribution in an app are listed. Excluded after review: Piper ryan (CC BY-NC-SA), lessac (Blizzard non-commercial), alan/jenny_dioco/amy (licence not stated in model card).",
+  "packs": [
+    {
+      "id": "kokoro-v1",
+      "engine": "kokoro",
+      "title": "Kokoro natural voices",
+      "archive": "kokoro-int8-multi-lang-v1_0",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kokoro-int8-multi-lang-v1_0.tar.bz2",
+      "sha256": "4c3052abaa60943a341f193888cf6abd68787dae6ab8ae5c925a706caa247e4e",
+      "downloadBytes": 132303094,
+      "installedBytes": 190000000,
+      "licence": "Apache-2.0",
+      "licenceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+      "quality": "Natural (neural, high quality)",
+      "requirements": "Best on phones from about 2021 onward with 4 GB RAM or more. READIT measures the speed on your phone before recommending it.",
+      "voices": [
+        {
+          "id": "kokoro:bf_emma",
+          "speaker": 21,
+          "name": "Emma",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "female",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bf_isabella",
+          "speaker": 22,
+          "name": "Isabella",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "female",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bf_lily",
+          "speaker": 23,
+          "name": "Lily",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "female",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bf_alice",
+          "speaker": 20,
+          "name": "Alice",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "female",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bm_george",
+          "speaker": 26,
+          "name": "George",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "male",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bm_lewis",
+          "speaker": 27,
+          "name": "Lewis",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "male",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bm_daniel",
+          "speaker": 24,
+          "name": "Daniel",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "male",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:bm_fable",
+          "speaker": 25,
+          "name": "Fable",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "male",
+          "lexicon": "lexicon-gb-en.txt"
+        },
+        {
+          "id": "kokoro:af_heart",
+          "speaker": 3,
+          "name": "Heart",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "female",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:af_bella",
+          "speaker": 2,
+          "name": "Bella",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "female",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:af_sarah",
+          "speaker": 9,
+          "name": "Sarah",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "female",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:af_nicole",
+          "speaker": 6,
+          "name": "Nicole",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "female",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:am_michael",
+          "speaker": 16,
+          "name": "Michael",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "male",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:am_adam",
+          "speaker": 11,
+          "name": "Adam",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "male",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:am_liam",
+          "speaker": 15,
+          "name": "Liam",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "male",
+          "lexicon": "lexicon-us-en.txt"
+        },
+        {
+          "id": "kokoro:am_echo",
+          "speaker": 12,
+          "name": "Echo",
+          "language": "en-US",
+          "accent": "American",
+          "gender": "male",
+          "lexicon": "lexicon-us-en.txt"
+        }
+      ]
+    },
+    {
+      "id": "piper-alba",
+      "engine": "piper",
+      "title": "Piper Alba",
+      "archive": "vits-piper-en_GB-alba-medium",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-alba-medium.tar.bz2",
+      "sha256": "fcd45962906933eec4431d3688f7d74aaac8713c87c6717f91fd3b23463aa1a1",
+      "downloadBytes": 67212349,
+      "installedBytes": 80000000,
+      "licence": "CC BY 4.0",
+      "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "quality": "Clear (neural, fast)",
+      "requirements": "Runs well on almost any phone.",
+      "voices": [
+        {
+          "id": "piper:alba",
+          "speaker": 0,
+          "name": "Alba",
+          "language": "en-GB",
+          "accent": "Scottish English",
+          "gender": "female",
+          "model": "en_GB-alba-medium.onnx"
+        }
+      ]
+    },
+    {
+      "id": "piper-northern",
+      "engine": "piper",
+      "title": "Piper Northern",
+      "archive": "vits-piper-en_GB-northern_english_male-medium",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-northern_english_male-medium.tar.bz2",
+      "sha256": "2bb2c1e709f58c11f17c693b3b38f500e110e7f54f2651774ec48b8d41f12c55",
+      "downloadBytes": 67210490,
+      "installedBytes": 80000000,
+      "licence": "CC BY-SA 4.0",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "quality": "Clear (neural, fast)",
+      "requirements": "Runs well on almost any phone.",
+      "voices": [
+        {
+          "id": "piper:northern",
+          "speaker": 0,
+          "name": "Northern",
+          "language": "en-GB",
+          "accent": "Northern English",
+          "gender": "male",
+          "model": "en_GB-northern_english_male-medium.onnx"
+        }
+      ]
+    },
+    {
+      "id": "piper-cori",
+      "engine": "piper",
+      "title": "Piper Cori",
+      "archive": "vits-piper-en_GB-cori-medium",
+      "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_GB-cori-medium.tar.bz2",
+      "sha256": "49c9a5361bbdd95d7ca9687c4de11e5908481f65e7c7c368960df79949fdac2b",
+      "downloadBytes": 67257412,
+      "installedBytes": 80000000,
+      "licence": "Public domain",
+      "licenceUrl": "",
+      "quality": "Clear (neural, fast)",
+      "requirements": "Runs well on almost any phone.",
+      "voices": [
+        {
+          "id": "piper:cori",
+          "speaker": 0,
+          "name": "Cori",
+          "language": "en-GB",
+          "accent": "British",
+          "gender": "female",
+          "model": "en_GB-cori-medium.onnx"
+        }
+      ]
+    }
+  ]
+}

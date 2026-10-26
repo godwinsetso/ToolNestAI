@@ -1,0 +1,138 @@
+name: Desktop
+
+on:
+  push:
+    branches: [main]
+    paths: ["readit/**", ".github/workflows/desktop.yml"]
+  pull_request:
+    paths: ["readit/**", ".github/workflows/desktop.yml"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Desktop tests (player, voices, audio)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
+      - name: System libraries
+        timeout-minutes: 15
+        run: |
+          sudo apt-get update -o Acquire::Retries=3
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libasound2-dev libxdo-dev
+      - name: PDFium and sample documents
+        run: |
+          mkdir -p readit/vendor/pdfium/linux-x64
+          curl -fsSL "https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F7881/pdfium-linux-x64.tgz" | tar xz -C readit/vendor/pdfium/linux-x64
+          pip install python-docx python-pptx reportlab ebooklib pypdf pillow && python3 readit/tools/make_fixtures.py
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
+      - name: cargo test
+        working-directory: readit/desktop/src-tauri
+        env: { READIT_PDFIUM_DIR: "${{ github.workspace }}/readit/vendor/pdfium/linux-x64/lib" }
+        run: ../../scripts/ci-run.sh cargo test
+
+  windows:
+    name: Windows installer
+
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Bundle PDFium and the offline voice
+        shell: bash
+        run: readit/scripts/fetch-desktop-deps.sh windows
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
+      - name: Build installer
+        working-directory: readit/desktop
+        run: |
+          npm ci
+          bash ../scripts/ci-run.sh npx tauri build --bundles nsis msi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readit-windows
+          path: |
+            readit/desktop/src-tauri/target/release/bundle/nsis/*.exe
+            readit/desktop/src-tauri/target/release/bundle/msi/*.msi
+
+  linux:
+    name: Linux packages
+
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: System libraries
+        timeout-minutes: 15
+        run: |
+          sudo apt-get update -o Acquire::Retries=3
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libasound2-dev libxdo-dev
+      - run: readit/scripts/ci-run.sh readit/scripts/fetch-desktop-deps.sh linux
+      - name: Re-run the speech engine build script (its download is not in target/)
+        working-directory: readit/desktop/src-tauri
+        shell: bash
+        run: cargo clean -p sherpa-rs-sys && cargo clean --release -p sherpa-rs-sys || true
+      - name: Build packages
+        working-directory: readit/desktop
+        run: |
+          npm ci
+          ../scripts/ci-run.sh npx tauri build --bundles deb appimage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readit-linux
+          path: |
+            readit/desktop/src-tauri/target/release/bundle/deb/*.deb
+            readit/desktop/src-tauri/target/release/bundle/appimage/*.AppImage
+
+  macos:
+    name: macOS app (experimental)
+
+    runs-on: macos-14
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: readit/scripts/ci-run.sh readit/scripts/fetch-desktop-deps.sh macos
+      - working-directory: readit/desktop
+        run: |
+          npm ci
+          ../scripts/ci-run.sh npx tauri build --bundles dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readit-macos
+          path: readit/desktop/src-tauri/target/release/bundle/dmg/*.dmg

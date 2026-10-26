@@ -1,0 +1,41 @@
+[versions]
+agp = "8.10.1"
+kotlin = "2.2.0"
+coreKtx = "1.16.0"
+lifecycle = "2.9.1"
+activityCompose = "1.10.1"
+composeBom = "2025.06.00"
+navigation = "2.9.0"
+media3 = "1.7.1"
+work = "2.10.1"
+coroutines = "1.10.2"
+commonsCompress = "1.27.1"
+jna = "5.17.0"
+junit = "4.13.2"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+androidx-media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "coroutines" }
+commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

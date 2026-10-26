@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>READIT</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="side" aria-label="Main">
+  <div class="wordmark" aria-label="READIT">READ<span>IT</span></div>
+  <button data-view="home" aria-current="page"><span class="lbl">Home</span><span class="key">Alt 1</span></button>
+  <button data-view="library"><span class="lbl">Library</span><span class="key">Alt 2</span></button>
+  <button data-view="listen"><span class="lbl">Listen</span><span class="key">Alt 3</span></button>
+  <button data-view="voices"><span class="lbl">Voices</span><span class="key">Alt 4</span></button>
+  <button data-view="settings"><span class="lbl">Settings</span><span class="key">Alt 5</span></button>
+  <div class="spacer"></div>
+  <p class="offline-note">Your documents stay on this computer. Nothing is uploaded.</p>
+</nav>
+
+<main>
+  <!-- Home -->
+  <section class="view active" id="view-home" aria-labelledby="home-title">
+    <div class="page">
+      <h1 id="home-title">What would you like to hear?</h1>
+      <p class="lede">Open a document and READIT reads it aloud, highlighting each sentence as it goes. It picks up where you stopped.</p>
+      <div id="continue"></div>
+      <div class="drop" id="drop">
+        <div>
+          <strong>Drop files here, or open them</strong>
+          <p>PDF, Word, PowerPoint, EPUB, RTF, web pages, Markdown and text. Several at once is fine.</p>
+        </div>
+        <button class="btn primary" id="open-files">Open documents</button>
+      </div>
+      <h2>Recently read</h2>
+      <ul class="doclist" id="recent"></ul>
+    </div>
+  </section>
+
+  <!-- Library -->
+  <section class="view" id="view-library" aria-labelledby="lib-title">
+    <div class="page">
+      <h1 id="lib-title">Library</h1>
+      <p class="lede" id="lib-count"></p>
+      <div class="toolbar">
+        <input type="search" id="lib-search" placeholder="Search titles" aria-label="Search titles">
+        <div class="chips" role="group" aria-label="Show">
+          <button class="chip" data-filter="all" aria-pressed="true">All</button>
+          <button class="chip" data-filter="recent" aria-pressed="false">Recent</button>
+          <button class="chip" data-filter="favourites" aria-pressed="false">Favourites</button>
+        </div>
+        <button class="btn" id="lib-import">Import</button>
+      </div>
+      <ul class="doclist" id="library"></ul>
+    </div>
+  </section>
+
+  <!-- Listen -->
+  <section class="view" id="view-listen" aria-label="Reader">
+    <div id="reader-empty" class="reader-empty">
+      <h1>Nothing is open</h1>
+      <p class="muted">Choose a document from Home or the Library and it will appear here, ready to play.</p>
+    </div>
+    <div id="reader" hidden style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <header class="reader-head">
+        <h1 id="r-title"></h1>
+        <span class="where" id="r-where" aria-live="polite"></span>
+        <button class="btn quiet" id="r-contents">Contents</button>
+        <button class="btn quiet" id="r-search" title="Ctrl+F">Search</button>
+        <button class="btn quiet" id="r-marks">Bookmarks</button>
+      </header>
+      <div class="reader-body">
+        <div class="text-scroll" id="scroll"><article class="text" id="text"></article></div>
+        <div class="spine" id="spine" role="slider" tabindex="0" aria-label="Position in document" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Voices -->
+  <section class="view" id="view-voices" aria-labelledby="voices-title">
+    <div class="page">
+      <h1 id="voices-title">Voices</h1>
+      <p class="lede">Download a voice once and it works without internet. Use Test to check whether a voice keeps up on this computer.</p>
+      <div id="packs"></div>
+      <h2>Personal voice</h2>
+      <p class="muted">Reading in your own voice, or the voice of someone who has agreed to it, is planned for a later version. It will ask for explicit consent, always be labelled as synthetic, and be deletable at any time. This version cannot create a personal voice.</p>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section class="view" id="view-settings" aria-labelledby="settings-title">
+    <div class="page" id="settings"></div>
+  </section>
+
+  <!-- Player bar: always visible -->
+  <footer class="player" aria-label="Player">
+    <div class="now-line"><div class="t" id="p-title">No document open</div><div class="s" id="p-sentence">Open a document to start listening</div></div>
+    <div class="transport">
+      <button class="icon-btn" id="b-prevp" aria-label="Previous paragraph" title="Previous paragraph (Up)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+      <button class="icon-btn skip-n" id="b-back" aria-label="Back 15 seconds" title="Back (Left)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1L7 6l5 5V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/></svg><small id="skip-a">15</small></button>
+      <button class="play" id="b-play" aria-label="Play" title="Play or pause (Space)"><svg viewBox="0 0 24 24" id="play-icon"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
+      <button class="icon-btn skip-n" id="b-fwd" aria-label="Forward 15 seconds" title="Forward (Right)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1l5 5-5 5V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/></svg><small id="skip-b">15</small></button>
+      <button class="icon-btn" id="b-nextp" aria-label="Next paragraph" title="Next paragraph (Down)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+    <div class="extras">
+      <button class="pill" id="b-speed" aria-label="Reading speed">1×</button>
+      <button class="pill" id="b-voice" aria-label="Voice">Voice</button>
+      <button class="pill" id="b-sleep" aria-label="Sleep timer">Sleep</button>
+      <button class="icon-btn" id="b-mark" aria-label="Bookmark this sentence" title="Bookmark (B)"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2zm0 15-5-2.2L7 18V5h10z"/></svg></button>
+      <input type="range" class="vol" id="vol" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+    </div>
+  </footer>
+</main>
+
+<div id="toasts" role="status" aria-live="polite"></div>
+<div class="spine-tip" id="spine-tip"></div>
+<audio id="preview" hidden></audio>
+<script src="app.js"></script>
+</body>
+</html>

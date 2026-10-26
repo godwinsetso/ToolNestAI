@@ -1,0 +1,3 @@
+[bindings.kotlin]
+package_name = "app.readit.core"
+cdylib_name = "readit_core"
