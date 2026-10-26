@@ -2,6 +2,7 @@ name: Android
 
 on:
   push:
+    branches: [main]
     paths: ["readit/**", ".github/workflows/**"]
   pull_request:
     paths: ["readit/**", ".github/workflows/**"]
@@ -10,7 +11,7 @@ on:
 jobs:
   core-tests:
     name: Core tests (Rust)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -36,7 +37,7 @@ jobs:
 
   apk:
     name: Build APK and App Bundle
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: core-tests
     steps:
       - uses: actions/checkout@v4
@@ -47,12 +48,14 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with: { workspaces: readit/core }
       - name: Native libraries, speech engine, bindings
-        env: { ANDROID_NDK_HOME: "${{ env.ANDROID_NDK_LATEST_HOME }}" }
-        run: readit/scripts/fetch-android-deps.sh
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          echo "Using NDK at $ANDROID_NDK_HOME"
+          readit/scripts/ci-run.sh readit/scripts/fetch-android-deps.sh
       - name: Gradle build
         working-directory: readit/android
         # Release outputs are unsigned unless READIT_KEYSTORE etc. are provided (see README).
-        run: ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
+        run: ../scripts/ci-run.sh ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: readit-android
