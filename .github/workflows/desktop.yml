@@ -16,7 +16,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-        with: { workspaces: readit/desktop/src-tauri }
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
       - name: System libraries
         timeout-minutes: 15
         run: |
@@ -40,7 +46,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-        with: { workspaces: readit/desktop/src-tauri }
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Bundle PDFium and the offline voice
@@ -66,7 +78,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-        with: { workspaces: readit/desktop/src-tauri }
+        with:
+          workspaces: readit/desktop/src-tauri
+          # The speech engine is downloaded by a build script into the user cache; keep it with target/.
+          cache-directories: |
+            ~/.cache/sherpa-rs
+            ~/AppData/Local/sherpa-rs
+            ~/Library/Caches/sherpa-rs
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: System libraries

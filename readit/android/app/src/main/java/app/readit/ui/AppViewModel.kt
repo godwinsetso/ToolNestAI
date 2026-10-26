@@ -264,7 +264,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     suspend fun storage(): StorageReport = withContext(Dispatchers.IO) { lib.storageReport() }
     fun clearAudioCache() = io {
         val freed = lib.clearAudioCache()
-        _messages.tryEmit("Cleared ${freed / 1_000_000} MB of generated audio. Documents and voices were kept.")
+        _messages.tryEmit("Cleared ${freed / 1_000_000u} MB of generated audio. Documents and voices were kept.")
     }
 
     fun eraseEverything() = io {
