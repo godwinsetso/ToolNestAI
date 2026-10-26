@@ -21,24 +21,40 @@ android {
     }
 
     signingConfigs {
-        // Release signing comes from environment variables so no key is ever committed.
+        // Public preview key: stable across builds so previews update in place. Not for store release.
+        create("preview") {
+            storeFile = rootProject.file("signing/readit-preview.jks")
+            storePassword = "readit-preview"
+            keyAlias = "readit-preview"
+            keyPassword = "readit-preview"
+            enableV1Signing = true // older installers and file managers look for META-INF signature files
+            enableV2Signing = true
+            enableV3Signing = true
+        }
+        // Private release key, supplied by CI secrets or the developer's environment.
         create("release") {
             val store = System.getenv("READIT_KEYSTORE")
-            if (store != null) {
+            if (!store.isNullOrBlank()) {
                 storeFile = file(store)
                 storePassword = System.getenv("READIT_KEYSTORE_PASSWORD")
                 keyAlias = System.getenv("READIT_KEY_ALIAS")
                 keyPassword = System.getenv("READIT_KEY_PASSWORD")
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
             }
         }
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("preview")
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (System.getenv("READIT_KEYSTORE") != null) signingConfig = signingConfigs.getByName("release")
+            if (!System.getenv("READIT_KEYSTORE").isNullOrBlank()) signingConfig = signingConfigs.getByName("release")
         }
     }
 

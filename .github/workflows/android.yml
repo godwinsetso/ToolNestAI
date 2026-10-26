@@ -54,8 +54,25 @@ jobs:
           readit/scripts/ci-run.sh readit/scripts/fetch-android-deps.sh
       - name: Gradle build
         working-directory: readit/android
-        # Release outputs are unsigned unless READIT_KEYSTORE etc. are provided (see README).
-        run: ../scripts/ci-run.sh ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
+        # The debug APK is signed with the public preview key. Release outputs are signed only
+        # when the private key secrets exist (see readit/android/signing/README.md).
+        env:
+          READIT_KEYSTORE_B64: ${{ secrets.READIT_KEYSTORE_B64 }}
+          READIT_KEYSTORE_PASSWORD: ${{ secrets.READIT_KEYSTORE_PASSWORD }}
+          READIT_KEY_ALIAS: ${{ secrets.READIT_KEY_ALIAS }}
+          READIT_KEY_PASSWORD: ${{ secrets.READIT_KEY_PASSWORD }}
+        run: |
+          if [ -n "$READIT_KEYSTORE_B64" ]; then
+            echo "$READIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            export READIT_KEYSTORE="$RUNNER_TEMP/release.jks"
+          fi
+          ../scripts/ci-run.sh ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
+      - name: Verify APK signatures
+        working-directory: readit/android
+        run: |
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/*.apk | head -12
+          "$APKSIGNER" verify --verbose app/build/outputs/apk/debug/*.apk | grep -q "v1 scheme (JAR signing): true" 
       - uses: actions/upload-artifact@v4
         with:
           name: readit-android
