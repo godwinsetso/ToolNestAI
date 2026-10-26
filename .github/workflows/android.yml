@@ -3,9 +3,9 @@ name: Android
 on:
   push:
     branches: [main]
-    paths: ["readit/**", ".github/workflows/**"]
+    paths: ["readit/**", ".github/workflows/android.yml"]
   pull_request:
-    paths: ["readit/**", ".github/workflows/**"]
+    paths: ["readit/**", ".github/workflows/android.yml"]
   workflow_dispatch:
 
 jobs:

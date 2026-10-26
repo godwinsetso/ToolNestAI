@@ -3,9 +3,9 @@ name: Desktop
 on:
   push:
     branches: [main]
-    paths: ["readit/**", ".github/workflows/**"]
+    paths: ["readit/**", ".github/workflows/desktop.yml"]
   pull_request:
-    paths: ["readit/**", ".github/workflows/**"]
+    paths: ["readit/**", ".github/workflows/desktop.yml"]
   workflow_dispatch:
 
 jobs:
