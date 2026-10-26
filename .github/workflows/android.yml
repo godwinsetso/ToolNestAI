@@ -78,7 +78,7 @@ jobs:
         working-directory: readit/android
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
-          ../scripts/ci-run.sh "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk > verify.txt || true
+          ../scripts/ci-run.sh "$APKSIGNER" verify --verbose --print-certs --min-sdk-version 23 app/build/outputs/apk/debug/app-debug.apk > verify.txt || true
           cat verify.txt
           grep -q "v1 scheme (JAR signing): true" verify.txt || { echo "::error::Debug APK has no v1 (JAR) signature: $(grep -i scheme verify.txt | tr '\n' ' ')"; exit 1; }
           grep -q "v2 scheme (APK Signature Scheme v2): true" verify.txt || { echo "::error::Debug APK has no v2 signature"; exit 1; }
