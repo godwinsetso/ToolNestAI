@@ -2,7 +2,7 @@
 # Stage what the desktop installer bundles:
 #   resources/pdfium/   PDF engine (PDFium, chromium/7881)
 #   resources/voices/   Piper Cori (public domain), so READIT speaks offline from first launch
-#   libs/linux/         speech engine shared libraries (Linux packages only)
+#   libs/<os>/          speech engine shared libraries, installed beside READIT
 # Usage: scripts/fetch-desktop-deps.sh [windows|linux|macos]   (default: this machine)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -39,15 +39,20 @@ if [ ! -f "$RES/voices/$CORI_ARCHIVE/.installed" ]; then
   echo "$CORI_SHA" > "$RES/voices/$CORI_ARCHIVE/.installed"
 fi
 
-if [ "$os" = linux ]; then
-  # Speech engine shared libraries for the .deb/.AppImage (Windows and macOS link it statically).
-  mkdir -p "$ROOT/desktop/src-tauri/libs/linux"
-  src=$(ls -d ~/.cache/sherpa-rs/x86_64-unknown-linux-gnu/*/sherpa-onnx-v1.12.9-linux-x64-shared/lib 2>/dev/null | head -1 || true)
-  if [ -z "$src" ]; then
-    curl -fsSL "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.12.9/sherpa-onnx-v1.12.9-linux-x64-shared.tar.bz2" | tar xj -C "$tmp"
-    src="$tmp/sherpa-onnx-v1.12.9-linux-x64-shared/lib"
-  fi
-  cp "$src/libsherpa-onnx-c-api.so" "$src/libonnxruntime.so" "$ROOT/desktop/src-tauri/libs/linux/"
+# Speech engine shared libraries (sherpa-onnx 1.12.9, the version sherpa-rs 0.6.8 links against).
+ENGINE=v1.12.9
+LIBS="$ROOT/desktop/src-tauri/libs/$os"
+mkdir -p "$LIBS"
+case "$os" in
+  linux)   arch=linux-x64-shared;   files="lib/libsherpa-onnx-c-api.so lib/libonnxruntime.so" ;;
+  windows) arch=win-x64-shared;     files="lib/sherpa-onnx-c-api.dll lib/onnxruntime.dll lib/onnxruntime_providers_shared.dll lib/cargs.dll" ;;
+  macos)   arch=""; files="" ;;   # linked statically
+esac
+if [ -n "$arch" ]; then
+  echo "Speech engine ($arch)"
+  curl -fsSL "https://github.com/k2-fsa/sherpa-onnx/releases/download/$ENGINE/sherpa-onnx-$ENGINE-$arch.tar.bz2" -o "$tmp/engine.tar.bz2"
+  tar xjf "$tmp/engine.tar.bz2" -C "$tmp"
+  for f in $files; do cp "$tmp/sherpa-onnx-$ENGINE-$arch/$f" "$LIBS/"; done
 fi
 rm -rf "$tmp"
 echo "Desktop resources ready for $os."

@@ -24,12 +24,14 @@ tauri-build = { version = "2", features = [] }
 [dev-dependencies]
 tempfile = "3.27.0"
 
-# Speech engine: statically linked on Windows and macOS (no extra libraries in the installer), shared on Linux.
-[target.'cfg(any(windows, target_os = "macos"))'.dependencies]
+# Speech engine. Windows uses the shared libraries (sherpa-rs cannot combine its
+# downloadable static libraries with text-to-speech there); the installer ships
+# them next to READIT. macOS links statically (verified in CI); Linux is shared.
+[target.'cfg(target_os = "macos")'.dependencies]
 sherpa-rs = { version = "0.6.8", default-features = false, features = ["tts", "download-binaries", "static"] }
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+sherpa-rs = { version = "0.6.8", default-features = false, features = ["tts", "download-binaries"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
-
-[target.'cfg(target_os = "linux")'.dependencies]
-sherpa-rs = { version = "0.6.8", default-features = false, features = ["tts", "download-binaries"] }

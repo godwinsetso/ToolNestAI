@@ -37,8 +37,13 @@ command -v cargo-ndk >/dev/null || cargo install cargo-ndk --locked
 (cd "$ROOT/core" && cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -P 26 -o "$APP/src/main/jniLibs" build --release --lib)
 
 echo "Generating Kotlin bindings"
-(cd "$ROOT/core" && cargo build --lib -q
-  LIB=$(ls target/debug/libreadit_core.so target/debug/libreadit_core.dylib target/debug/readit_core.dll 2>/dev/null | head -1)
+(cd "$ROOT/core"
+  cargo build --lib -q
+  LIB=""
+  for f in target/debug/libreadit_core.so target/debug/libreadit_core.dylib target/debug/readit_core.dll; do
+    [ -f "$f" ] && LIB="$f" && break
+  done
+  [ -n "$LIB" ] || { echo "Could not find the host build of readit_core"; exit 1; }
   cargo run -q --bin uniffi-bindgen -- generate --library "$LIB" \
     --language kotlin --out-dir "$APP/src/main/java" --no-format)
 
