@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "READIT",
+  "version": "0.1.0",
+  "identifier": "app.readit.desktop",
+  "build": {
+    "frontendDist": "../ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "READIT",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 720,
+        "minHeight": 520,
+        "dragDropEnabled": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' data:; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis",
+      "msi",
+      "deb",
+      "appimage",
+      "dmg"
+    ],
+    "category": "Productivity",
+    "shortDescription": "Listen to your documents, privately and offline",
+    "longDescription": "READIT reads PDF, Word, PowerPoint, EPUB and other documents aloud in natural offline voices. No account, no uploads.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "resources/": "resources/"
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "pdf"
+        ],
+        "name": "PDF document",
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "docx"
+        ],
+        "name": "Word document",
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "pptx"
+        ],
+        "name": "PowerPoint presentation",
+        "role": "Viewer"
+      },
+      {
+        "ext": [
+          "epub"
+        ],
+        "name": "EPUB book",
+        "role": "Viewer"
+      }
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      },
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      }
+    },
+    "linux": {
+      "deb": {
+        "files": {
+          "/usr/lib/readit/libsherpa-onnx-c-api.so": "libs/linux/libsherpa-onnx-c-api.so",
+          "/usr/lib/readit/libonnxruntime.so": "libs/linux/libonnxruntime.so"
+        },
+        "depends": [
+          "libwebkit2gtk-4.1-0",
+          "libgtk-3-0",
+          "libasound2t64 | libasound2"
+        ]
+      },
+      "appimage": {
+        "files": {
+          "usr/lib/readit/libsherpa-onnx-c-api.so": "libs/linux/libsherpa-onnx-c-api.so",
+          "usr/lib/readit/libonnxruntime.so": "libs/linux/libonnxruntime.so"
+        }
+      }
+    },
+    "copyright": "READIT contributors"
+  }
+}

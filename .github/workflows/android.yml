@@ -1,0 +1,62 @@
+name: Android
+
+on:
+  push:
+    paths: ["readit/**", ".github/workflows/**"]
+  pull_request:
+    paths: ["readit/**", ".github/workflows/**"]
+  workflow_dispatch:
+
+jobs:
+  core-tests:
+    name: Core tests (Rust)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: readit/core }
+      - name: Fetch PDFium for tests
+        run: |
+          mkdir -p readit/vendor/pdfium/linux-x64
+          curl -fsSL "https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F7881/pdfium-linux-x64.tgz" | tar xz -C readit/vendor/pdfium/linux-x64
+      - name: Generate sample documents
+        run: pip install python-docx python-pptx reportlab ebooklib pypdf pillow && python3 readit/tools/make_fixtures.py
+      - name: cargo test
+        working-directory: readit/core
+        env: { READIT_PDFIUM_DIR: "${{ github.workspace }}/readit/vendor/pdfium/linux-x64/lib" }
+        run: cargo test
+      - name: Reading engine tests (Kotlin on JVM, real core)
+        env: { READIT_PDFIUM_DIR: "${{ github.workspace }}/readit/vendor/pdfium/linux-x64/lib" }
+        run: |
+          curl -fsSL -o /tmp/kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v2.2.21/kotlin-compiler-2.2.21.zip
+          unzip -q /tmp/kotlin.zip -d /tmp
+          curl -fsSL -o /tmp/jna.jar https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.17.0/jna-5.17.0.jar
+          KOTLINC=/tmp/kotlinc/bin/kotlinc JNA_JAR=/tmp/jna.jar readit/tools/jvm-test.sh
+
+  apk:
+    name: Build APK and App Bundle
+    runs-on: ubuntu-latest
+    needs: core-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: dtolnay/rust-toolchain@stable
+        with: { targets: "aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: readit/core }
+      - name: Native libraries, speech engine, bindings
+        env: { ANDROID_NDK_HOME: "${{ env.ANDROID_NDK_LATEST_HOME }}" }
+        run: readit/scripts/fetch-android-deps.sh
+      - name: Gradle build
+        working-directory: readit/android
+        # Release outputs are unsigned unless READIT_KEYSTORE etc. are provided (see README).
+        run: ./gradlew --no-daemon assembleDebug assembleRelease bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: readit-android
+          path: |
+            readit/android/app/build/outputs/apk/debug/*.apk
+            readit/android/app/build/outputs/apk/release/*.apk
+            readit/android/app/build/outputs/bundle/release/*.aab

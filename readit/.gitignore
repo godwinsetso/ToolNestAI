@@ -1,0 +1,15 @@
+target/
+**/build/
+.gradle/
+local.properties
+*.apk
+*.aab
+vendor/pdfium/
+voice-samples/*.wav
+android/app/src/main/jniLibs/
+android/app/libs/*.aar
+desktop/node_modules/
+desktop/src-tauri/resources/pdfium/
+desktop/src-tauri/resources/voices/
+desktop/src-tauri/libs/
+desktop/src-tauri/gen/

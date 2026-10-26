@@ -1,0 +1,13 @@
+{
+  "name": "readit-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "READIT desktop app (Tauri). The interface is plain HTML, CSS and JavaScript in ui/; no bundler.",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.4"
+  }
+}
